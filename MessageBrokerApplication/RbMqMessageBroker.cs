@@ -140,17 +140,11 @@ namespace MessageBrokerApplication
 
             var consumer = new AsyncEventingBasicConsumer(channel);
 
-            var handlerType = typeof(TH);
-            //
-
-            var scope = _serviceScopeFactory.CreateScope();
-
-            var handlerInstance = scope.ServiceProvider.GetRequiredService(typeof(IReplyMessageHandler<T>));
-
-            var handlerConcreteType = typeof(IReplyMessageHandler<>).MakeGenericType(typeof(T));
-
             consumer.Received += async (model, ea) =>
             {
+                var scope = _serviceScopeFactory.CreateScope();
+                var handlerInstance = scope.ServiceProvider.GetRequiredService(typeof(IReplyMessageHandler<T>));
+                var handlerConcreteType = typeof(IReplyMessageHandler<>).MakeGenericType(typeof(T));
 
                 var messageString = Encoding.UTF8.GetString(ea.Body.ToArray());
 
